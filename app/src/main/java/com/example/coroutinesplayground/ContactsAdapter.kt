@@ -35,6 +35,11 @@ class ContactsAdapter(private var context : Context): RecyclerView.Adapter<Conta
         notifyDataSetChanged()
     }
 
+    fun addContact(contact: Contact){
+        contactsList.add(contact)
+        notifyDataSetChanged()
+    }
+
     fun removeContact(contact : Contact){
         contactsList.remove(contact)
         notifyDataSetChanged()

@@ -2,11 +2,11 @@ package com.example.coroutinesplayground
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bindingMainActivity: ActivityMainBinding
     lateinit var contactsViewModel: ContactsViewModel
     lateinit var contactsAdapter: ContactsAdapter
+    lateinit var addDialog : AlertDialog
     var contactsPagingAdapter = ContactPagingAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             contactsViewModel.allContacts.collectLatest {
                 contactsPagingAdapter.submitData(it) }
         }*/
+        setupAlertDialog()
         setupRecyclerViewAndAdapter()
         setupSwipeHelper()
         observeContactsLiveData()
@@ -52,6 +54,25 @@ class MainActivity : AppCompatActivity() {
         bindingMainActivity.rvContacts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = contactsAdapter
+        }
+    }
+
+    private fun setupAlertDialog(){
+        val v = LayoutInflater.from(this).inflate(
+            R.layout.add_contact,
+            null
+        )
+        addDialog =
+            AlertDialog.Builder(this).setView(v).create()
+        val editText = v.findViewById(R.id.etContactName) as EditText
+        val tvAdd = v.findViewById(R.id.tvAdd) as TextView
+        tvAdd.setOnClickListener {
+            if(editText.text.toString()!=""){
+                val contact = Contact(0,editText.text.toString(),0)
+                contactsViewModel.insertContact(contact)
+                contactsAdapter.addContact(contact)
+                addDialog.dismiss()
+            }
         }
     }
 
@@ -97,7 +118,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.add_contact ->{
-                Toast.makeText(this,"Adding new",Toast.LENGTH_SHORT).show()
+                addDialog.show()
                 return true
             }
         }

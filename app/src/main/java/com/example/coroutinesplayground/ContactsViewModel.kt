@@ -21,9 +21,7 @@ public class ContactsViewModel(app:Application): AndroidViewModel(app) {
         contactsLiveData.postValue(contactsDB.allContactsByNameList())
     }
 
-    fun insertContact(contact : Contact){
-        contactsDB.insert(contact)
-    }
+    fun insertContact(contact : Contact) = ioThread{ contactsDB.insert(contact) }
 
     fun removeContact(contact: Contact) = ioThread {
         contactsDB.delete(contact)
