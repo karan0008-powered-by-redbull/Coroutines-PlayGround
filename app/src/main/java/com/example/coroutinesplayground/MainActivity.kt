@@ -69,9 +69,10 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
         val tvAdd = v.findViewById(R.id.tvAdd) as TextView
         tvAdd.setOnClickListener {
             if(editText.text.toString()!=""){
+                bindingMainActivity.pbContacts.visibility = View.VISIBLE
                 val contact = Contact(0,editText.text.toString(),false,0)
                 contactsViewModel.insertContact(contact)
-                contactsAdapter.addContact(contact)
+                contactsViewModel.fetchAllContacts()
                 addDialog.dismiss()
             }
         }
@@ -106,8 +107,8 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
     private fun observeContactsLiveData(){
         contactsViewModel.getContactsLiveData().observe(this,
         Observer<List<Contact>>{
-            contactsAdapter.clearData()
             bindingMainActivity.pbContacts.visibility = View.GONE
+            contactsAdapter.clearData()
             contactsAdapter.addAll(it)
         })
     }

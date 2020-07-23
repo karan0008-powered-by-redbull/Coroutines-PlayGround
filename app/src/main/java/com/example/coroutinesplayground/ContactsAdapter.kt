@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
@@ -41,6 +42,14 @@ class ContactsAdapter(private var context : Context,
             listener?.onStarClicked(contactsList[position])
             notifyDataSetChanged()
         }
+    }
+
+    fun updateList(newList : List<Contact>){
+        val diffUtilCallback = ContactDiffUtilCallback(contactsList,newList)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+        this.contactsList.clear()
+        this.contactsList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun clearData(){
@@ -77,7 +86,7 @@ class ContactsAdapter(private var context : Context,
             tvName.text = contact.name
             val nameArray = contact.name.split(" ")
             val builder = StringBuilder()
-            if (nameArray.size > 1) {
+            if (nameArray.size > 1 && nameArray[0].isNotEmpty()) {
                 builder.append(nameArray[0][0])
                 builder.append(nameArray[1][0])
             } else builder.append(contact.name[0].toString())

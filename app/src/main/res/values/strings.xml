@@ -11,6 +11,7 @@
     <string name="search">Search</string>
     <string name="add">Add</string>
     <string name="favourites">Favourites</string>
+    <string name="enter_contact_name">Enter contact name</string>
 
 
 </resources>
