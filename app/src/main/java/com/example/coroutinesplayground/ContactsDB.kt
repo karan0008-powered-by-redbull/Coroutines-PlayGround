@@ -52,6 +52,7 @@ abstract class ContactsDB : RoomDatabase() {
                         Contact(
                             id = 0,
                             name = it,
+                            isFavourite = false,
                             colorAssociated = colorArray[Random().nextInt(colorArray.size)]
                         )
                     })

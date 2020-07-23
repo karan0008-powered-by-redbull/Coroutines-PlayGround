@@ -2,10 +2,7 @@ package com.example.coroutinesplayground
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface ContactsDao {
@@ -16,6 +13,9 @@ interface ContactsDao {
     @Query("SELECT * FROM Contact ORDER BY name COLLATE NOCASE ASC")
     fun allContactsByNameList(): List<Contact>
 
+    @Query("SELECT * FROM Contact WHERE isFavourite = 1")
+    fun fetchFavouriteContacts() : List<Contact>
+
     @Insert
     fun insert(cheeses: List<Contact>)
 
@@ -24,4 +24,7 @@ interface ContactsDao {
 
     @Delete
     fun delete(cheese: Contact)
+
+    @Update
+    fun update(cheese: Contact)
 }

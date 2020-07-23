@@ -1,7 +1,6 @@
 package com.example.coroutinesplayground
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,25 +9,32 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import com.example.coroutinesplayground.FavoriteContactsAdapter.*
+import java.util.ArrayList
 
-class ContactsAdapter(private var context : Context,
-                    private var listener: OnContactClickListener?
-): RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
+class FavoriteContactsAdapter(
+    private var context : Context,
+    private var listener: OnFavouriteContactClicked?
+) : RecyclerView.Adapter<FavoriteContactViewHolder>() {
+
     private val contactsList = ArrayList<Contact>()
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
-        return ContactsViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.contacts_view,parent,false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteContactViewHolder {
+        return FavoriteContactViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.favourites_view, parent, false)
         )
+    }
+
+    fun addAll(updatedList : List<Contact>){
+        contactsList.addAll(updatedList)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
         return contactsList.size
     }
 
-    override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FavoriteContactViewHolder, position: Int) {
         holder.bindData(contactsList[position],context)
         holder.ivFav.setOnClickListener {
             contactsList[position].isFavourite = !contactsList[position].isFavourite
@@ -43,33 +49,17 @@ class ContactsAdapter(private var context : Context,
         }
     }
 
-    fun clearData(){
-        contactsList.clear()
-        notifyDataSetChanged()
-    }
-
-    fun addAll(updatedList : List<Contact>){
-        contactsList.addAll(updatedList)
-        notifyDataSetChanged()
-    }
-
-    fun addContact(contact: Contact){
-        contactsList.add(contact)
-        notifyDataSetChanged()
-    }
-
-    fun removeContact(contact : Contact){
+    fun removeFavouriteInstant(contact: Contact){
         contactsList.remove(contact)
         notifyDataSetChanged()
     }
 
 
-
-    class ContactsViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    class FavoriteContactViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         val ivCheck = view.findViewById(R.id.ivCheck) as ImageView
         val clView = view.findViewById(R.id.clView) as ConstraintLayout
-        var contact : Contact? = null
         val ivFav = view.findViewById(R.id.ivFav) as ImageView
+        var contact : Contact? = null
         private val tvNameInitials = view.findViewById(R.id.tvNameInitials) as TextView
         private val tvName = view.findViewById(R.id.tvName) as TextView
         fun bindData(contact : Contact, context: Context){
@@ -93,7 +83,7 @@ class ContactsAdapter(private var context : Context,
         }
     }
 
-    interface OnContactClickListener {
+    interface OnFavouriteContactClicked{
         fun onStarClicked(contact: Contact)
     }
 

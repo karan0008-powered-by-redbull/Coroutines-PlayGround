@@ -7,4 +7,5 @@ import androidx.room.PrimaryKey
 data class Contact(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
+    var isFavourite : Boolean,
     val colorAssociated : Int)

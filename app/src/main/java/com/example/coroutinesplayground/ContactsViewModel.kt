@@ -8,13 +8,19 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 
-public class ContactsViewModel(app:Application): AndroidViewModel(app) {
+class ContactsViewModel(app:Application): AndroidViewModel(app) {
     private val contactsDB = ContactsDB.get(app).contactDao()
 
     private val contactsLiveData = MutableLiveData<List<Contact>>()
 
     fun getContactsLiveData() : LiveData<List<Contact>>{
         return contactsLiveData
+    }
+
+    private val favContactsLiveData = MutableLiveData<List<Contact>>()
+
+    fun getFavContactsLiveData() : LiveData<List<Contact>>{
+        return favContactsLiveData
     }
 
     fun fetchAllContacts() = ioThread {
@@ -26,6 +32,13 @@ public class ContactsViewModel(app:Application): AndroidViewModel(app) {
     fun removeContact(contact: Contact) = ioThread {
         contactsDB.delete(contact)
     }
+
+    fun updateContact(contact: Contact) = ioThread {
+        contactsDB.update(contact)
+    }
+
+    fun getFavourites() = ioThread { favContactsLiveData.postValue(contactsDB.fetchFavouriteContacts()) }
+
 
 
     /*val allContacts = Pager(

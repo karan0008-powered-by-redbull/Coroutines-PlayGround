@@ -1,31 +1,27 @@
 package com.example.coroutinesplayground
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coroutinesplayground.databinding.ActivityMainBinding
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener {
 
     private lateinit var bindingMainActivity: ActivityMainBinding
     lateinit var contactsViewModel: ContactsViewModel
     lateinit var contactsAdapter: ContactsAdapter
     lateinit var addDialog : AlertDialog
-    var contactsPagingAdapter = ContactPagingAdapter()
+    //var contactsPagingAdapter = ContactPagingAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +42,16 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerViewAndAdapter()
         setupSwipeHelper()
         observeContactsLiveData()
+    }
+
+    override fun onResume() {
+        super.onResume()
         contactsViewModel.fetchAllContacts()
     }
 
+
     private fun setupRecyclerViewAndAdapter(){
-        contactsAdapter = ContactsAdapter(this)
+        contactsAdapter = ContactsAdapter(this,this)
         bindingMainActivity.rvContacts.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = contactsAdapter
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         val tvAdd = v.findViewById(R.id.tvAdd) as TextView
         tvAdd.setOnClickListener {
             if(editText.text.toString()!=""){
-                val contact = Contact(0,editText.text.toString(),0)
+                val contact = Contact(0,editText.text.toString(),false,0)
                 contactsViewModel.insertContact(contact)
                 contactsAdapter.addContact(contact)
                 addDialog.dismiss()
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeContactsLiveData(){
         contactsViewModel.getContactsLiveData().observe(this,
         Observer<List<Contact>>{
+            contactsAdapter.clearData()
             bindingMainActivity.pbContacts.visibility = View.GONE
             contactsAdapter.addAll(it)
         })
@@ -121,8 +123,13 @@ class MainActivity : AppCompatActivity() {
                 addDialog.show()
                 return true
             }
+            R.id.fav-> startActivity(Intent(this,FavouritesActivity::class.java))
         }
         return false
+    }
+
+    override fun onStarClicked(contact: Contact) {
+        contactsViewModel.updateContact(contact)
     }
 
 }
