@@ -62,19 +62,23 @@ abstract class ContactsDB : RoomDatabase() {
 }
 
 private val CONTACTS_DATA_MOCK = arrayListOf(
-    "Abbaye de Belloc",
-    "Abbaye du Mont des Cats",
-    "Abertam",
-    "Abondance",
-    "Ackawi",
-    "Acorn",
-    "Adelost",
-    "Affidelice au Chablis",
-    "Afuega'l Pitu",
-    "Airag",
-    "Airedale",
-    "Aisy Cendre",
-    "Allgauer Emmentaler"
+    "Asheesh",
+    "Daljeet",
+    "Aakash",
+    "Sukirti Sharma",
+    "Nitin Bhatt",
+    "Renu Yadav",
+    "Himani Sharma",
+    "Sushmit Gaur",
+    "Babban Deep Singh",
+    "Puneet",
+    "Rahul Baboria",
+    "Chinmayee",
+    "Amy",
+    "Shivam Gupta",
+    "Sunidhi Sharma",
+    "Freckles",
+    "Meenakshi"
 )
 
 private val CONTACTS_DATA = arrayListOf(
