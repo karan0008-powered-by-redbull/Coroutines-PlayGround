@@ -1,7 +1,6 @@
 package com.example.coroutinesplayground
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ class ContactsAdapter(private var context : Context,
         }
     }
 
-    fun updateList(newList : List<Contact>){
+    fun updateListUsingDiffCallback(newList : List<Contact>){
         val diffUtilCallback = ContactDiffUtilCallback(contactsList,newList)
         val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
         this.contactsList.clear()
@@ -57,7 +56,8 @@ class ContactsAdapter(private var context : Context,
         notifyDataSetChanged()
     }
 
-    fun addAll(updatedList : List<Contact>){
+    fun addAllContacts(updatedList : List<Contact>){
+        contactsList.clear()
         contactsList.addAll(updatedList)
         notifyDataSetChanged()
     }

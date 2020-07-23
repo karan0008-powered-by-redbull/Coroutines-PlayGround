@@ -13,8 +13,9 @@ class ContactDiffUtilCallback(
 
     override fun getNewListSize(): Int = newList.size
 
+    // This is where the manipulation will occur
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        oldList[oldItemPosition].name == newList[newItemPosition].name
+        oldList[oldItemPosition].isFavourite == newList[newItemPosition].isFavourite
 
     override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
         return super.getChangePayload(oldItemPosition, newItemPosition)

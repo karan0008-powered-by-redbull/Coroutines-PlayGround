@@ -108,8 +108,9 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
         contactsViewModel.getContactsLiveData().observe(this,
         Observer<List<Contact>>{
             bindingMainActivity.pbContacts.visibility = View.GONE
-            contactsAdapter.clearData()
-            contactsAdapter.addAll(it)
+            //contactsAdapter.clearData()
+            //contactsAdapter.addAllContacts(it)
+            contactsAdapter.updateListUsingDiffCallback(it)
         })
     }
 
