@@ -3,6 +3,7 @@ package com.example.coroutinesplayground
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -44,9 +45,10 @@ class FavouritesActivity : AppCompatActivity(), FavoriteContactsAdapter.OnFavour
             })
     }
 
-    override fun onStarClicked(contact: Contact) {
+    override fun onStarClicked(contact: Contact, position :Int) {
         contactsViewModel.updateContact(contact)
-        favAdapter.removeFavouriteInstant(contact)
+        favAdapter.removeFavouriteInstant(contact,position)
+        Toast.makeText(this,contact.name+" has been removed from favourites",Toast.LENGTH_SHORT).show()
     }
 
 }

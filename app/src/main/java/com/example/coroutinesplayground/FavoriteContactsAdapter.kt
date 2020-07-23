@@ -44,14 +44,15 @@ class FavoriteContactsAdapter(
             else
                 holder.ivFav.setImageDrawable(ContextCompat.getDrawable(context,
                     R.drawable.ic_baseline_star_border_24))
-            listener?.onStarClicked(contactsList[position])
+            listener?.onStarClicked(contactsList[position],position)
             notifyDataSetChanged()
         }
     }
 
-    fun removeFavouriteInstant(contact: Contact){
+    fun removeFavouriteInstant(contact: Contact,position: Int){
         contactsList.remove(contact)
-        notifyDataSetChanged()
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position,contactsList.size)
     }
 
 
@@ -84,7 +85,7 @@ class FavoriteContactsAdapter(
     }
 
     interface OnFavouriteContactClicked{
-        fun onStarClicked(contact: Contact)
+        fun onStarClicked(contact: Contact,position: Int)
     }
 
 }

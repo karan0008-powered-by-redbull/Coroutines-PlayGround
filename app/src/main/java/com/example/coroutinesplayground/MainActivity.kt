@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -70,10 +71,12 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
         tvAdd.setOnClickListener {
             if(editText.text.toString()!=""){
                 bindingMainActivity.pbContacts.visibility = View.VISIBLE
-                val contact = Contact(0,editText.text.toString(),false,0)
+                val name = editText.text.toString()
+                val contact = Contact(0,name,false,0)
                 contactsViewModel.insertContact(contact)
                 contactsViewModel.fetchAllContacts()
                 addDialog.dismiss()
+                Toast.makeText(this, "$name has been added to contact list", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -99,7 +102,10 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
                 (viewHolder as ContactsAdapter.ContactsViewHolder).contact?.let {
                     contactsViewModel.removeContact(it)
                 }
-                contactsAdapter.removeContact(viewHolder.contact!!)
+                contactsAdapter.removeContact(viewHolder.contact!!,viewHolder.pos)
+                Toast.makeText(applicationContext,
+                    "${viewHolder.contact!!.name} has been removed from contact list",
+                    Toast.LENGTH_SHORT).show()
             }
         }).attachToRecyclerView(bindingMainActivity.rvContacts)
     }
@@ -125,13 +131,20 @@ class MainActivity : AppCompatActivity(), ContactsAdapter.OnContactClickListener
                 addDialog.show()
                 return true
             }
-            R.id.fav-> startActivity(Intent(this,FavouritesActivity::class.java))
+            R.id.fav->{
+                startActivity(Intent(this,FavouritesActivity::class.java))
+                return true
+            }
         }
         return false
     }
 
     override fun onStarClicked(contact: Contact) {
         contactsViewModel.updateContact(contact)
+        if(contact.isFavourite)
+            Toast.makeText(this, "${contact.name} has been added to favourites", Toast.LENGTH_SHORT).show()
+        else
+            Toast.makeText(this, "${contact.name} has been removed from favourites", Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -29,7 +29,7 @@ class ContactsAdapter(private var context : Context,
     }
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
-        holder.bindData(contactsList[position],context)
+        holder.bindData(contactsList[position],position,context)
         holder.ivFav.setOnClickListener {
             contactsList[position].isFavourite = !contactsList[position].isFavourite
             if(contactsList[position].isFavourite)
@@ -48,28 +48,20 @@ class ContactsAdapter(private var context : Context,
         val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
         this.contactsList.clear()
         this.contactsList.addAll(newList)
+        // Cheaper method to call than notifyDataSetChanged()
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun clearData(){
-        contactsList.clear()
-        notifyDataSetChanged()
-    }
-
-    fun addAllContacts(updatedList : List<Contact>){
-        contactsList.clear()
-        contactsList.addAll(updatedList)
-        notifyDataSetChanged()
-    }
-
-    fun addContact(contact: Contact){
-        contactsList.add(contact)
-        notifyDataSetChanged()
-    }
-
-    fun removeContact(contact : Contact){
+    fun removeContact(contact : Contact,position: Int){
+        // Removing Using DiffUtil
+        /*val newList = ArrayList<Contact>()
+        val diffUtilCallback = ContactDiffUtilCallback(this.contactsList,newList)
+        val result = DiffUtil.calculateDiff(diffUtilCallback)
         contactsList.remove(contact)
-        notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)*/
+        contactsList.remove(contact)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position,contactsList.size)
     }
 
 
@@ -77,12 +69,14 @@ class ContactsAdapter(private var context : Context,
     class ContactsViewHolder(view : View) : RecyclerView.ViewHolder(view) {
         val ivCheck = view.findViewById(R.id.ivCheck) as ImageView
         val clView = view.findViewById(R.id.clView) as ConstraintLayout
+        var pos = 0
         var contact : Contact? = null
         val ivFav = view.findViewById(R.id.ivFav) as ImageView
         private val tvNameInitials = view.findViewById(R.id.tvNameInitials) as TextView
         private val tvName = view.findViewById(R.id.tvName) as TextView
-        fun bindData(contact : Contact, context: Context){
+        fun bindData(contact : Contact, position: Int, context: Context){
             this.contact = contact
+            this.pos = position
             tvName.text = contact.name
             val nameArray = contact.name.split(" ")
             val builder = StringBuilder()
@@ -104,6 +98,30 @@ class ContactsAdapter(private var context : Context,
 
     interface OnContactClickListener {
         fun onStarClicked(contact: Contact)
+    }
+
+    companion object {
+        /**
+         * This diff callback informs the PagedListAdapter how to compute list differences when new
+         * PagedLists arrive.
+         * <p>
+         * When you add a Cheese with the 'Add' button, the PagedListAdapter uses diffCallback to
+         * detect there's only a single item difference from before, so it only needs to animate and
+         * rebind a single view.
+         *
+         * @see DiffUtil
+         */
+        private val diffCallback = object : DiffUtil.ItemCallback<Contact>() {
+            override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean =
+                oldItem.id == newItem.id
+
+            /**
+             * Note that in kotlin, == checking on data classes compares all contents, but in Java,
+             * typically you'll implement Object#equals, and use it to compare object contents.
+             */
+            override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean =
+                oldItem == newItem
+        }
     }
 
 }
